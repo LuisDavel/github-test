@@ -1,24 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState } from "react";
 
 function App() {
+  const [query, setQuery] = useState("");
+  const [useSearch, setSearch] = useState("");
+
+  const handleSearch = async () => {
+    await fetch(`https://api.github.com/search/users?q=${query}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSearch(data.items);
+      });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main>
+      <section className="container">
+        <header>
+          <h1>BUSCA USUÁRIO</h1>
+        </header>
+        <div className="input-container">
+          <input
+            className="input-text"
+            value={query}
+            onChange={({ target }) => setQuery(target.value)}
+            type="text"
+            placeholder="Pesquisar"
+          />
+          <div>
+            <button
+              className="input-submit"
+              onClick={handleSearch}
+              type="submit"
+            ></button>
+          </div>
+        </div>
+      </section>
+      <section>
+        <ul>
+          {useSearch.map((user) => (
+            <li key={user.id}>
+              <img src={user.avatar_url} alt={`Foto de ${user.login}`} />
+
+              {user.login}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
   );
 }
 
